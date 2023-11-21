@@ -108,3 +108,72 @@ let categories = [
      }
  ];
 
+ window.onload = function () {
+     let dropdownMenuCategories = document.getElementById("activityCategories");
+     categories.forEach(function (category) {
+         let option = document.createElement("option");
+         option.text = category;
+         dropdownMenuCategories.add(option);
+     });
+ 
+     let dropdownMenuActivities = document.getElementById("activities");
+     activities.forEach(function (activity) {
+         let option = document.createElement("option");
+         option.text = activity.name;
+         option.value = activity.name;
+         option.setAttribute("data-category", activity.category);
+         dropdownMenuActivities.add(option);
+     });
+ 
+     // btn event listener
+     document.getElementById("next").addEventListener("click", nextBtn);
+     document.getElementById("submit").addEventListener("click", submitBtn);
+    }
+    
+    // function for next btn
+    function nextBtn() {
+        document.getElementById("activitiesSections").style.display = "block";
+    }
+    
+    // function for submit btn
+    function submitBtn() {
+        loadTableBody();
+    }
+    
+    function loadTableBody() {
+        let results = document.getElementById("results");
+        let categorySelected = document.getElementById('activityCategories');
+        let activitySelected = document.getElementById('activities');
+        let selectedCategory = categorySelected.value;
+        let selectedActivityValue = activitySelected.value;
+    
+        let selectedActivity = activities.find(activity => activity.name === selectedActivityValue);
+    
+        if (selectedCategory !== "selectOne" && selectedActivityValue !== "selectOne") {
+            let activityCategory = activitySelected.options[activitySelected.selectedIndex].getAttribute("data-category");
+    
+            if (activityCategory === selectedCategory && selectedActivity) {
+                let tableHTML = "<table><tr><th>ID</th><th>Price</th><th>Location</th></tr>";
+    
+                for (let i = 0; i < activities.length; i++) {
+                    tableHTML += buildRow(activities[i]);
+                }
+    
+                results.innerHTML = tableHTML;
+            } else {
+                alert("Please select an activity that matches the selected category.");
+            }
+        } else {
+            alert("Please select a category and an activity.");
+        }
+    }
+    
+    function buildRow(activity) {
+        return `
+            <tr>
+                <td>${activity.id}</td>
+                <td>$${activity.price.toFixed(2)}</td>
+                <td>${activity.location}</td>
+            </tr>`;
+    }
+    
